@@ -4,6 +4,7 @@ __pycache__/
 *.pyc
 .pytest_cache/
 .env
+local_only/*
 
 # IDE
 .vscode/
