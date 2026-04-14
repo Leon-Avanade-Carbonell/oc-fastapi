@@ -66,6 +66,54 @@ The server will start at `http://localhost:8000`
 - Alternative docs: `http://localhost:8000/redoc`
 <!-- END AUTO-GENERATED: how-to-run -->
 
+## Database Container Setup
+
+### Starting the PostgreSQL Container with Podman
+
+**Check if the container exists:**
+```bash
+podman ps -a | grep postgres-oc
+```
+
+**Start an existing container:**
+```bash
+podman start postgres-oc
+```
+
+**Create and start a new PostgreSQL container (if it doesn't exist):**
+```bash
+podman run -d \
+  --name postgres-oc \
+  -e POSTGRES_PASSWORD=password \
+  -e POSTGRES_USER=postgres \
+  -e POSTGRES_DB=fastapi_db \
+  -p 5432:5432 \
+  postgres:latest
+```
+
+**Verify the container is running:**
+```bash
+podman ps | grep postgres-oc
+```
+
+**Stop the container:**
+```bash
+podman stop postgres-oc
+```
+
+**View container logs:**
+```bash
+podman logs postgres-oc
+```
+
+### Using the Makefile
+
+If you have database-related targets in your Makefile, you can also use:
+```bash
+make db-start    # Start database container
+make db-stop     # Stop database container
+```
+
 <!-- AUTO-GENERATED: project-structure -->
 ## Project Structure
 

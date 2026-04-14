@@ -77,8 +77,12 @@ async def serve_cog(variable: str, time: str, zoom_level: int):
     """
     Serve a Cloud-Optimized GeoTIFF file for a specific variable, time, and zoom level.
 
-    This endpoint serves pre-generated COG files with embedded georeferencing (WGS84).
-    The response supports HTTP 206 range requests for efficient partial file access.
+    This endpoint serves pre-generated COG files with embedded georeferencing in Web Mercator
+    (EPSG:3857) projection. The response supports HTTP 206 range requests for efficient partial
+    file access.
+
+    **Important:** GeoTIFFs are now in Web Mercator (EPSG:3857) for seamless integration with
+    MapLibre GL and DeckGL's default projection. Coordinates are in meters, not degrees.
 
     **Dual-band structure:**
     - Band 1: RGB visual data (green colormap applied)
@@ -91,21 +95,22 @@ async def serve_cog(variable: str, time: str, zoom_level: int):
     - DATA_MIN: Global historical minimum
     - DATA_MAX: Global historical maximum
     - COLORMAP_TYPE: "green_scale"
-    - CRS: "EPSG:4326"
+    - CRS: "EPSG:3857" (Web Mercator)
+    - BOUNDS_WGS84: Original bounds in WGS84 degrees [west, south, east, north]
 
     Args:
         variable: Climate variable name (e.g., "monthly_rain")
         time: Time step (e.g., "1989-01-16")
-        zoom_level: Zoom level 0-10
+        zoom_level: Zoom level 0-5 (higher levels provide greater detail)
 
     Returns:
-        Binary GeoTIFF file with HTTP range request support
+        Binary GeoTIFF file in Web Mercator projection (EPSG:3857) with HTTP range request support
 
     Status Codes:
         200: Success (full file)
         206: Partial content (range request satisfied)
         404: Variable, time, or zoom level not found
-        422: Invalid zoom level (not 0-10)
+        422: Invalid zoom level (not 0-5)
         500: Server error
 
     Headers:
@@ -116,6 +121,12 @@ async def serve_cog(variable: str, time: str, zoom_level: int):
     Example:
         GET /climate-mvt/monthly_rain/1989-01-16/z5.tif
         Range: bytes=0-1048575  (optional, for range requests)
+
+    **Coordinate System Note:**
+    - Backend generates GeoTIFFs in Web Mercator (EPSG:3857)
+    - Coordinates are in meters (Web Mercator projection)
+    - Frontend DeckGL BitmapLayer reads embedded georeferencing automatically
+    - No manual coordinate transformation needed on the client side
     """
     try:
         # Validate zoom_level
