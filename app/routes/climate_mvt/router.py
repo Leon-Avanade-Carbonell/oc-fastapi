@@ -1,6 +1,7 @@
 """Climate MVT (Cloud-Optimized GeoTIFF) endpoint routes."""
 
-from fastapi import APIRouter, HTTPException, FileResponse
+from fastapi import APIRouter, HTTPException
+from fastapi.responses import FileResponse
 from app.db import get_available_variables, get_available_times
 from app.routes.climate_mvt.utils import (
     validate_zoom_level,
