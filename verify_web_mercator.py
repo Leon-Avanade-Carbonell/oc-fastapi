@@ -223,7 +223,7 @@ def check_metadata_generation():
             checks["crs_epsg3857_tag"] = True
         if "BOUNDS_WGS84=" in source_text:
             checks["bounds_wgs84_tag"] = True
-        if "COLORMAP_TYPE='green_scale'" in source_text:
+        if "COLORMAP_TYPE='red_blue'" in source_text:
             checks["colormap_tag"] = True
         if "DATA_MIN=" in source_text and "DATA_MAX=" in source_text:
             checks["data_min_max_tags"] = True
